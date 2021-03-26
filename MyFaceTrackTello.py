@@ -10,7 +10,7 @@ me.connect()
 print(me.get_battery())
 
 me.streamon()
-# me.takeoff()
+me.takeoff()
 
 ##send_rc_control(self, left_right_velocity, forward_backward_velocity, up_down_velocity, yaw_velocity)
 # me.send_rc_control(0, 0, 15, 0)
@@ -21,6 +21,10 @@ fbRange = [6200, 6800]
 
 pid = [0.4, 0.4, 0]
 pError = 0
+
+# 비디오 처리
+fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+out = cv2.VideoWriter('output.avi', fourcc, 25.0, (w, h))
 
 
 def findFace(img):
@@ -63,7 +67,7 @@ def trackFace(info, w, pid, pError):
         error = 0
 
     ##### forward/ backward control
-    if area > fbRange[0] and  area < fbRange[1]:
+    if area > fbRange[0] and area < fbRange[1]:
         fb = 0
 
     if area > fbRange[1]:
@@ -95,28 +99,31 @@ while True:
     # print("Center", info[0], "Area", info[1])
 
     cv2.imshow("Output", img)
+    # 비디오 저장
+    out.write(img)
+
     key = cv2.waitKey(1) & 0xff
     if key == 27:  # ESC
         break
     elif key == ord('t'):
         me.takeoff()
         me.send_rc_control(0, 0, 20, 0)
-        time.sleep(1.0)
-    elif key == ord('w'):
-        me.move_forward(10)
-    elif key == ord('s'):
-        me.move_back(10)
-    elif key == ord('a'):
-        me.move_left(10)
-    elif key == ord('d'):
-        me.move_right(10)
-    elif key == ord('e'):
-        me.rotate_clockwise(10)
-    elif key == ord('q'):
-        me.rotate_counter_clockwise(10)
-    elif key == ord('r'):
-        me.move_up(10)
+        # time.sleep(1.0)
     elif key == ord('f'):
+        me.move_forward(10)
+    elif key == ord('b'):
+        me.move_back(10)
+    elif key == ord('l'):
+        me.move_left(10)
+    elif key == ord('r'):
+        me.move_right(10)
+    elif key == ord('c'):
+        me.rotate_clockwise(10)
+    elif key == ord('v'):
+        me.rotate_counter_clockwise(10)
+    elif key == ord('u'):
+        me.move_up(10)
+    elif key == ord('d'):
         me.move_down(10)
 
 cv2.destroyAllWindows()
